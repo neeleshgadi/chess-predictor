@@ -1,5 +1,7 @@
 # ♟️ Chess Predictor
 
+**🌐 Live Demo:** [https://chess-predictor.vercel.app/](https://chess-predictor.vercel.app/)
+
 A full-stack web application built for chess fans to predict the final standings of Round Robin tournaments (like the Candidates Tournament or Tata Steel). Users can drag and drop players into their predicted order, lock in their predictions, and view a community leaderboard.
 
 ## ✨ Features
