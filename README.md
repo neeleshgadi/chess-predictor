@@ -1,37 +1,26 @@
 # ♟️ Chess Predictor
 
-A modern chess analysis and performance tracking dashboard built with Next.js, Supabase, and Tailwind CSS.
-
-🚀 **Live Demo:** [https://chess-predictor.vercel.app/](https://chess-predictor.vercel.app/)
+A full-stack web application built for chess fans to predict the final standings of Round Robin tournaments (like the Candidates Tournament or Tata Steel). Users can drag and drop players into their predicted order, lock in their predictions, and view a community leaderboard.
 
 ## ✨ Features
-
-- **🏆 Real-time Leaderboard**: Track top players and their performance metrics.
-- **📊 Performance Analytics**: Deep dive into chess statistics and game predictions.
-- **🔐 Secure Authentication**: Integrated login system for personalized tracking.
-- **🎨 Premium UI**: Sleek, responsive design with dark mode support.
-- **⚡ Fast & Scalable**: Built on Next.js 14+ for optimal performance.
+- **Interactive Drag-and-Drop:** Intuitive interface built with `@dnd-kit` to easily rank players from 1st to 8th place.
+- **Secure Authentication:** User sign-up and login powered by Supabase Auth.
+- **Live Database:** All predictions are permanently stored in a cloud PostgreSQL database.
+- **Community Leaderboard:** A public view showing everyone's locked-in predictions and top 3 podium picks.
 
 ## 🛠️ Tech Stack
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS & shadcn/ui
+- **Interactivity:** `@dnd-kit/core` & `@dnd-kit/sortable`
+- **Database & Auth:** Supabase
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Components**: [Radix UI](https://www.radix-ui.com/) / [shadcn/ui](https://ui.shadcn.com/)
-- **Database/Auth**: [Supabase](https://supabase.com/)
-- **Deployment**: [Vercel](https://vercel.com/)
+## 🚀 Local Setup
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm / yarn / pnpm
-
-### Installation
+To run this project locally on your own machine:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/neeleshgadi/chess-predictor.git
+   git clone https://github.com/YOUR_USERNAME/chess-predictor.git
    cd chess-predictor
    ```
 
@@ -41,19 +30,14 @@ A modern chess analysis and performance tracking dashboard built with Next.js, S
    ```
 
 3. **Set up Environment Variables:**
-   Create a `.env.local` file in the root directory and add your Supabase credentials:
+   Create a `.env.local` file in the root directory and add your Supabase keys:
    ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_SUPABASE_URL="your_supabase_project_url"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="your_supabase_anon_key"
    ```
 
 4. **Run the development server:**
    ```bash
    npm run dev
    ```
-
-Open [http://localhost:3000](http://localhost:3000) to see the app in action.
-
-## 📄 License
-
-This project is licensed under the MIT License.
+   Open [http://localhost:3000](http://localhost:3000) in your browser to see the app.
