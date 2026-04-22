@@ -13,7 +13,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const auth = await requireAdmin();
-  if (!auth.ok) return auth.response;
+  if (!auth.ok)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
 
@@ -110,7 +111,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const auth = await requireAdmin();
-  if (!auth.ok) return auth.response;
+  if (!auth.ok)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
 

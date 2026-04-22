@@ -5,7 +5,8 @@ import { requireAdmin } from "@/lib/adminAuth";
 export async function POST(_request: NextRequest) {
   // 1. Verify admin role
   const auth = await requireAdmin();
-  if (!auth.ok) return auth.response;
+  if (!auth.ok)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   // 2. Read tournament ID from env
   const tournamentId = process.env.TOURNAMENT_ID;

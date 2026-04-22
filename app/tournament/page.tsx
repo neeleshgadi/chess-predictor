@@ -14,11 +14,11 @@ export default async function TournamentPage() {
   // Fetch live standings from Supabase
   let liveStandings: LiveStandings | null = null;
   if (tournamentId) {
-    const { data } = await supabaseAdmin
+    const { data } = (await supabaseAdmin
       .from("live_standings")
       .select("*")
       .eq("tournament_id", tournamentId)
-      .single<LiveStandings>();
+      .single()) as { data: LiveStandings | null; error: any };
     liveStandings = data ?? null;
   }
 
@@ -49,13 +49,13 @@ export default async function TournamentPage() {
   if (session) {
     const userName = session.user.email?.split("@")[0] ?? null;
     if (userName) {
-      const { data } = await supabaseAdmin
+      const { data } = (await supabaseAdmin
         .from("predictions")
         .select("*")
         .eq("user_name", userName)
         .order("created_at", { ascending: false })
         .limit(1)
-        .single<Prediction>();
+        .single()) as { data: Prediction | null; error: any };
       userPrediction = data ?? null;
     }
   }

@@ -6,7 +6,8 @@ import type { PlayerEntry } from "@/lib/types";
 // GET /api/admin/tournaments — list all tournaments ordered by fetched_at DESC
 export async function GET() {
   const auth = await requireAdmin();
-  if (!auth.ok) return auth.response;
+  if (!auth.ok)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { data, error } = await supabaseAdmin
     .from("live_standings")
@@ -26,7 +27,8 @@ export async function GET() {
 // POST /api/admin/tournaments — create a new tournament
 export async function POST(request: NextRequest) {
   const auth = await requireAdmin();
-  if (!auth.ok) return auth.response;
+  if (!auth.ok)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   let body: {
     tournament_id?: unknown;

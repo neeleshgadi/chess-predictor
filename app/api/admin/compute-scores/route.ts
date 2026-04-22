@@ -24,14 +24,16 @@ export async function POST(request: NextRequest) {
 
   // 2. Verify admin role
   const auth = await requireAdmin();
-  if (!auth.ok) return auth.response;
+  if (!auth.ok)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   // 3. Fetch tournament_results row
-  const { data: tournamentResult, error: tournamentError } = await supabaseAdmin
-    .from("tournament_results")
-    .select("*")
-    .eq("tournament_name", tournamentName)
-    .single<TournamentResult>();
+  const { data: tournamentResult, error: tournamentError } =
+    (await supabaseAdmin
+      .from("tournament_results")
+      .select("*")
+      .eq("tournament_name", tournamentName)
+      .single()) as { data: TournamentResult | null; error: any };
 
   if (tournamentError || !tournamentResult) {
     return NextResponse.json(

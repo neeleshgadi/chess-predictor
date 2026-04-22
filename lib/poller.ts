@@ -33,11 +33,11 @@ export async function pollStandings(
   const { force = false } = options;
 
   // 1. Read current live_standings row
-  const { data: row, error: readError } = await supabaseAdmin
+  const { data: row, error: readError } = (await supabaseAdmin
     .from("live_standings")
     .select("*")
     .eq("tournament_id", tournamentId)
-    .maybeSingle<LiveStandings>();
+    .maybeSingle()) as { data: LiveStandings | null; error: any };
 
   if (readError) {
     console.error(
@@ -179,11 +179,14 @@ export async function pollStandings(
 
   if (isCompletedTransition) {
     // Check idempotency guard — re-read scored_at
-    const { data: freshRow } = await supabaseAdmin
+    const { data: freshRow } = (await supabaseAdmin
       .from("live_standings")
       .select("scored_at")
       .eq("tournament_id", tournamentId)
-      .maybeSingle<Pick<LiveStandings, "scored_at">>();
+      .maybeSingle()) as {
+      data: Pick<LiveStandings, "scored_at"> | null;
+      error: any;
+    };
 
     if (freshRow?.scored_at) {
       // Already scored — skip Score_Engine
