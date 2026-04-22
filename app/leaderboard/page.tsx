@@ -1,74 +1,82 @@
-import { supabase } from "@/lib/supabase"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import type { Prediction, CumulativeLeaderboardEntry } from "@/lib/types";
+import LeaderboardTabs from "./LeaderboardTabs";
 
-export const revalidate = 0; // Ensure the page always shows the freshest data
+export const revalidate = 0;
 
 export default async function LeaderboardPage() {
-  // Fetch predictions from the database, newest first
-  const { data: predictions, error } = await supabase
-    .from('predictions')
-    .select('*')
-    .order('created_at', { ascending: false })
+  // Fetch per-tournament predictions
+  const { data: predictions, error: predictionsError } = await supabase
+    .from("predictions")
+    .select("*")
+    .order("score", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: true });
 
-  if (error) {
-    return <div className="p-10 text-red-500">Error loading predictions: {error.message}</div>
+  if (predictionsError) {
+    return (
+      <main className="max-w-4xl mx-auto px-6 py-16">
+        <p className="text-sm text-red-500 font-bold tracking-[0.05em] uppercase">
+          Error loading predictions: {predictionsError.message}
+        </p>
+      </main>
+    );
   }
 
+  // Fetch all-time cumulative leaderboard independently
+  const { data: cumulativeData, error: cumulativeError } = await supabase
+    .from("cumulative_leaderboard")
+    .select("user_name, cumulative_score, tournaments_played");
+
   return (
-    <main className="max-w-4xl mx-auto p-6 mt-10 min-h-screen">
-      <div className="flex items-center justify-between mb-8 border-b pb-6">
+    <main className="max-w-4xl mx-auto px-6 py-16">
+      {/* Header */}
+      <div className="mb-10 pb-8 border-b border-[#E2E8F0] flex items-end justify-between">
         <div>
-          <h1 className="text-4xl font-bold mb-2 tracking-tight">Community Predictions</h1>
-          <p className="text-muted-foreground text-lg">
-            See what everyone else thinks will happen!
+          <p className="text-xs font-bold tracking-[0.15em] uppercase text-[#64748B] mb-3">
+            Community
+          </p>
+          <h1
+            className="text-4xl font-bold text-[#0F172A] mb-3"
+            style={{ letterSpacing: "-0.02em" }}
+          >
+            All{" "}
+            <span
+              className="text-highlight"
+              style={
+                {
+                  "--highlight-color": "var(--highlight-mint)",
+                } as React.CSSProperties
+              }
+            >
+              Predictions
+            </span>
+          </h1>
+          <p className="text-[#64748B] text-base">
+            {predictions?.length ?? 0} prediction
+            {predictions?.length !== 1 ? "s" : ""} submitted
           </p>
         </div>
         <Link href="/">
-          <Button variant="outline">Back to Predict</Button>
+          <Button
+            variant="outline"
+            className="text-xs tracking-[0.05em] uppercase border-[#E2E8F0] text-[#64748B] hover:border-[#0F172A] hover:text-[#0F172A] rounded-lg"
+          >
+            Back to Predict
+          </Button>
         </Link>
       </div>
 
-      {predictions?.length === 0 ? (
-        <div className="text-center p-10 bg-secondary/20 rounded-xl border border-border/50">
-          <p className="text-muted-foreground">No predictions have been submitted yet.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {predictions?.map((prediction) => (
-            <Card key={prediction.id} className="overflow-hidden shadow-sm">
-              <CardHeader className="bg-secondary/30 pb-4">
-                <CardTitle className="text-xl">
-                  {prediction.user_name}&apos;s List
-                </CardTitle>
-                <p className="text-xs text-muted-foreground">
-                  Submitted: {new Date(prediction.created_at).toLocaleDateString()}
-                </p>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ul className="divide-y">
-                  {/* We only show the Top 3 predictions on the card so it doesn't get too tall */}
-                  {prediction.ranked_list.slice(0, 3).map((player: any) => (
-                    <li key={player.id} className="p-4 flex items-center">
-                      <span className="w-8 text-lg font-bold text-muted-foreground">
-                        {player.rank}
-                      </span>
-                      <span className="font-semibold text-md">{player.name}</span>
-                      {player.rank === 1 && <span className="ml-auto text-xl">🏆</span>}
-                      {player.rank === 2 && <span className="ml-auto text-xl">🥈</span>}
-                      {player.rank === 3 && <span className="ml-auto text-xl">🥉</span>}
-                    </li>
-                  ))}
-                </ul>
-                <div className="p-3 bg-secondary/10 text-xs text-center text-muted-foreground border-t">
-                  ... and {prediction.ranked_list.length - 3} more
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <LeaderboardTabs
+        predictions={(predictions as Prediction[]) ?? []}
+        cumulativeEntries={
+          cumulativeError
+            ? null
+            : ((cumulativeData as CumulativeLeaderboardEntry[]) ?? [])
+        }
+        cumulativeError={cumulativeError?.message ?? null}
+      />
     </main>
-  )
+  );
 }

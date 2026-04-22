@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/poll-standings",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}
