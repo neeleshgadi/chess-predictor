@@ -2,7 +2,9 @@
 create table predictions (
   id uuid default gen_random_uuid() primary key,
   user_name text not null, -- The name of the person predicting
+  tournament_name text not null default '', -- The name of the tournament
   ranked_list jsonb not null, -- The final sorted list of chess players
+  score integer default null, -- Score assigned after tournament completes
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -33,14 +35,8 @@ CREATE POLICY "Admin update" ON tournament_results
 CREATE POLICY "Public read" ON tournament_results
   FOR SELECT USING (true);
 
--- Add score column to predictions
-ALTER TABLE predictions ADD COLUMN score integer DEFAULT NULL;
-
--- Prevent public clients from updating the score column
-CREATE POLICY "No public score update" ON predictions
-  FOR UPDATE USING (false);
-
--- live_standings table for caching live tournament data from external chess APIs
+-- cumulative_leaderboard view for all-time rankings (Requirements 6.1, 6.2, 6.3, 6.4)
+CREATE VIEW cumulative_leaderboard AS
 CREATE TABLE live_standings (
   id                uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   tournament_id     text NOT NULL UNIQUE,
