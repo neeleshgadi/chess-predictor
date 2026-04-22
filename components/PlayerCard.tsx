@@ -7,8 +7,8 @@ import { useState, useEffect } from "react";
 interface Player {
   id: string;
   name: string;
-  rating: number;
-  country: string;
+  rating?: number;
+  country?: string;
 }
 
 interface PlayerCardProps {
@@ -95,12 +95,16 @@ export function PlayerCard({ player, rank }: PlayerCardProps) {
           >
             {player.name}
           </p>
-          <p
-            className="text-xs tracking-[0.05em] uppercase text-[#64748B] mt-0.5"
-            style={{ fontFamily: "var(--font-primary)" }}
-          >
-            {player.country} · {player.rating}
-          </p>
+          {(player.country || player.rating) && (
+            <p
+              className="text-xs tracking-[0.05em] uppercase text-[#64748B] mt-0.5"
+              style={{ fontFamily: "var(--font-primary)" }}
+            >
+              {player.country && player.rating
+                ? `${player.country} · ${player.rating}`
+                : player.country || player.rating}
+            </p>
+          )}
         </div>
 
         {/* Drag handle */}

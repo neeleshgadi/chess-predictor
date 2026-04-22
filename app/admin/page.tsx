@@ -9,13 +9,8 @@ export default async function AdminPage() {
   const auth = await requireAdmin();
 
   if (!auth.ok) {
-    const status = auth.response.status;
-    if (status === 401) {
-      // Not logged in → redirect to login
-      redirect("/login");
-    }
-    // Logged in but not admin → show 403
-    return auth.response;
+    // Not logged in → redirect to login
+    redirect("/login");
   }
 
   const { data: tournaments } = await supabaseAdmin
